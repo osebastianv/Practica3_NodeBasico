@@ -1,4 +1,50 @@
-# Nodepop
+# Práctica 7 de despliegue de servidores (DevOps)
+
+Vamos a realizar el despliegue de dos aplicaciones web en un servidor AWS:
+
+* Una plantilla de Start Bootstrap:
+    https://osv18.host
+
+* Una aplicación de node llamada *Nodepop* que simula una página web básica con anuncios de compra/venta de artículos. Los anuncios están guardados de una base de datos *mongoDB*.
+    https://nodepop3.osv18.host
+
+Un resumen de las acciones realizadas sería:
+
+* Acceso al servidor por ssh con certificado, con autenticación usuario / contraseña deshabilitada y con el puerto por defecto cambiado. La IP del servidor se ha configurado para que persista en el tiempo (elastic IP).
+
+* Uso de node como servidor de aplicaciones y de PM2 para que la aplicación *Nodepop* arranque sola ante reinicios del servidor, para que persista en el tiempo.
+
+* Uso de *mongoDB* como base de datos de la aplicación "nodepop". Se ha incluido autenticación y se ha configurado su persistencia en el tiempo.
+
+* Creación de una variable de entorno para la cadena de conexión a la base de datos de *mongoDB*, por lo que la aplicación *nodepop* solo ha sufrido ese cambio con respecto a la aplicación original. En dicha cadena de conexión se han incluido los parámetros de autenticación requeridos.
+
+* Utilización de nginx como proxy inverso para derivar las peticiones HTTP a node.
+
+* Utilización de nginx para servir los archivos estáticos de la aplicación *nodepop* en vez de node. Los archivos estáticos servidos contienen el campo X-Served-By renombrado al nombre de usuario de este repositorio.
+
+    Un ejemplo de archivo estático sería:
+https://nodepop3.osv18.host/images/anuncios/bici.jpg
+
+* Eliminación de la versión de nginx en el mensaje de error de página. 
+
+* Uso de un dominio para acceso a las dos aplicaciones. El acceso original antes de implementar el dominio era:
+
+    * Plantilla de Start Bootstrap:
+    54.236.103.85
+
+    * Aplicación *Nodepop*:
+    ec2-54-236-103-85.compute-1.amazonaws.com
+
+    Actualmente, ambos accesos han sido redirigidos a las rutas web mencionados al inicio de la página.
+
+* Aplicación de una conexión HTTPS para redirigir una petición HTTP a HTTPS.
+
+* Utilización de PM2 para gestionar los logs.
+
+* Baneo temporal de IPs ante continuos intentos fallidos de acceso al servidor.
+
+
+# Práctica 3 de node (original): Nodepop 
 
 *Nodepop* es una aplicación de backend que simula una página web básica con anuncios de compra/venta de artículos. Implementa una api para obtener anuncios de una base de datos *mongoDB* (*nodepopDB*) a la que se accede a través del paquete *mongoose*.
 
